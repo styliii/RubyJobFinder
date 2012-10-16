@@ -1,0 +1,15 @@
+Scrape websites that have ruby jobs, and save it into a database
+
+I need the database to at least include:
+job header
+company
+summary
+link to apply
+salary
+link to original posting
+industry
+equity?
+posted date
+
+Choose site to scrape
+http://careers.stackoverflow.com/jobs?searchTerm=ruby+on+rails&location=10003&range=60
