@@ -4,34 +4,9 @@ require 'sqlite3'
 require 'fileutils'
 require_relative 'model.rb'
 
-# creating database
-# unless File.exists?("jobs.db")
-@db = SQLite3::Database.new( "jobs.db" )
-sql = <<SQL
-CREATE table jobs
-( id INTEGER PRIMARY KEY,
-job_header TEXT,
-location TEXT,
-telecommute BOOLEAN,
-job_description TEXT,
-skills_and_requirements TEXT,
-link_to_listing TEXT,
-last_posted TEXT,
-created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-employer_id INTEGER
-);
-
-CREATE table employers
-( id INTEGER PRIMARY KEY,
-  about TEXT,
-  url TEXT,
-  name TEXT
-  );
-
-SQL
-
-@db.execute_batch( sql )
-# end
+@db = Database.new
+@db.create_employers_table
+@db.create_jobs_table
 
 # Setting database
 # @db = SQLite3::Database.open('jobs.db')
@@ -98,15 +73,15 @@ job_links = job_list_page.css("a.title").map{|link| link["href"]}
     employer_url = listing_page.css("a.employer").first['href']
 
     # if employer doesn't exist, create in database, otherwise, get the employer_id
-    if Employer.find(employer_name).empty?
-      employer = Employer.new
-      employer.insert_employer(employer_name, employer_url, about_company)
+    if Employer.find(employer_name, @db).empty?
+      employer = Employer.new(employer_name, employer_url, about_company)
+      employer.insert_employer(@db)
     end
-    employer_id = Employer.find(employer_name)
+    employer_id = Employer.find(employer_name, @db)
 
     #insert into database now!
     job = Job.new
-    job.insert_job(job_header, employer_id, location, telecommute, job_description, skills_and_requirements, link_to_listing)
+    job.insert_job(job_header, employer_id, location, telecommute, job_description, skills_and_requirements, link_to_listing, @db)
     puts "inserting job info"
 
   end
