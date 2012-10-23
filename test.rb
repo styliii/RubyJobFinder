@@ -69,7 +69,7 @@ describe Job do
     job_2.employer_name = "Yahoo!"
     job_2.insert_job(@db)
 
-    Job.find_by_employer_name("Yahoo!", @db).count.must_equal 1
+    Job.find_jobs_by_employer_id(Job.find_employer_id(job_2.employer_name, @db), @db).flatten.first.must_equal 1
   end
 end
 

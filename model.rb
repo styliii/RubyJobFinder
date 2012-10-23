@@ -16,11 +16,18 @@ class Job
 
   end
 
-  def self.find_by_employer_name(employer_name, database)
-    database.db.execute("SELECT * from jobs
-                                      INNER JOIN employers on jobs.employer_id = employers.id
-                                      WHERE employers.name = '#{employer_name}'").flatten
+  def self.find_employer_id(employer_name, database)
+    database.db.execute("SELECT * from employers WHERE employers.name = '#{employer_name}'").flatten.first
   end
+
+  def self.find_jobs_by_employer_id(id, database)
+    database.db.execute("SELECT COUNT(*) FROM jobs WHERE employer_id = '#{id}';")
+  end
+  # def self.find_by_employer_name(employer_name, database)
+  #   database.db.execute("SELECT * from jobs
+  #                                     INNER JOIN employers on jobs.employer_id = employers.id
+  #                                     WHERE employers.name = '#{employer_name}'").flatten
+  # end
 
 end
 
