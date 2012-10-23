@@ -56,10 +56,12 @@ describe Job do
     Employer.find("Google", @db).count.must_equal 1
   end
 
-  it "we should be able to search by employer for all the jobs" do
+  it "should be able to search by employer for all the jobs" do
     @db = Database.new
     @db.create_employers_table
     @db.create_jobs_table
+    # @db.db.results_as_hash = true
+
     job_1 = Job.new
     job_1.job_header = "Jr. Dev"
     job_1.employer_name = "Google"
@@ -69,7 +71,8 @@ describe Job do
     job_2.employer_name = "Yahoo!"
     job_2.insert_job(@db)
 
-    Job.find_by_employer_name("Yahoo!", @db).count.must_equal 1
+    # job_2.find_employer(@db).count.must_equal 1
+    Employer.find_by_name(job_2.employer_name).count.must_equal 1
   end
 end
 

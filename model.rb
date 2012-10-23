@@ -10,16 +10,16 @@ class Job
   def insert_job(database)
     employer = Employer.new(@employer_name)
     employer.insert_employer(database)
-    employer_id = database.db.execute("select last_insert_rowid();").flatten.first
+    employer_id = database.db.execute("select last_insert_rowid();").first[0]
     # employer_id = database.db.execute("select id from employers where employers.name = '#{employer_name}'").flatten.first
     database.db.execute("INSERT INTO jobs (job_header, employer_id, location, telecommute, job_description, skills_and_requirements, link_to_listing) VALUES (?, ?, ?, ?, ?, ?, ?)", @job_header, employer_id, @location, @telecommute, @job_description, @skills_and_requirements, @link_to_listing)
 
   end
 
-  def self.find_by_employer_name(employer_name, database)
+  def find_employer(database)
     database.db.execute("SELECT * from jobs
                                       INNER JOIN employers on jobs.employer_id = employers.id
-                                      WHERE employers.name = '#{employer_name}'").flatten
+                                      WHERE employers.name = (?)", self.employer_name).flatten
   end
 
 end
@@ -49,6 +49,7 @@ class Database
 
   def initialize
       @db = SQLite3::Database.new( "jobs.db" )
+      @db.results_as_hash = true
   end
 
   def create_employers_table
